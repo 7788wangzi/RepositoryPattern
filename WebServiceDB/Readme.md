@@ -2,9 +2,10 @@
 
 ## About This Demo
 >>
-|-- ORM
-	|-- Generic
-	|-- Application
+
+|-- ORM  
+	|-- Generic  
+	|-- Application  
 
 >>
 
@@ -13,6 +14,28 @@ For above folder structure:
 - Generic, the Generic folder contains two code files `IRepository` and `Repository`, these are files that are independent to our application, meaning you could copy it to your own project.
 - Application, the Application folder contains EntityReposity and UnitOfWork that are related to our application, we make Course entity as a sample, you could follow this pattern to add your own Entity Repository and UnitOfWork code for your own project.
 
+See following code in `` about how to use:
+```csharp
+        [WebMethod]
+        public string TestORMRepositoryPattern()
+        {
+            using (var unitOfWork = new ORM.Application.UnitOfWork(new testEntities()))
+            {
+                //get example
+                var course = unitOfWork.Courses.Get(1);
+                var allCourses = unitOfWork.Courses.GetAll();             
+
+                var courses = unitOfWork.Courses.GetCoursesWithAuthors(1, 10);
+
+                //update example
+                course.Abstract = "course 1 - abstract";
+                unitOfWork.Complete();
+
+                return string.Empty;
+            }
+
+        }
+```
 
 ## Repository Pattern Explanation in-depth
 Benifits
