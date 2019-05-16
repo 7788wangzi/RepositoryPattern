@@ -1,20 +1,18 @@
 ﻿## Demo of repository pattern with C# and Entity Framework
 
 ## About This Demo
->>
-
+```
 |-- ORM  
 	|-- Generic  
 	|-- Application  
-
->>
+```
 
 For above folder structure:
 
 - Generic, the Generic folder contains two code files `IRepository` and `Repository`, these are files that are independent to our application, meaning you could copy it to your own project.
 - Application, the Application folder contains EntityReposity and UnitOfWork that are related to our application, we make Course entity as a sample, you could follow this pattern to add your own Entity Repository and UnitOfWork code for your own project.
 
-See following code in `` about how to use:
+See following code in `WebServiceDB.asmx.cs` about how to use:
 ```csharp
         [WebMethod]
         public string TestORMRepositoryPattern()
