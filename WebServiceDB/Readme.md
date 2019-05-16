@@ -1,5 +1,20 @@
 ﻿## Demo of repository pattern with C# and Entity Framework
 
+## About This Demo
+>>
+|-- ORM
+	|-- Generic
+	|-- Application
+
+>>
+
+For above folder structure:
+
+- Generic, the Generic folder contains two code files `IRepository` and `Repository`, these are files that are independent to our application, meaning you could copy it to your own project.
+- Application, the Application folder contains EntityReposity and UnitOfWork that are related to our application, we make Course entity as a sample, you could follow this pattern to add your own Entity Repository and UnitOfWork code for your own project.
+
+
+## Repository Pattern Explanation in-depth
 Benifits
 - Minimizes duplicate query logic
 - Decouples your application from persistence frameworks, there will be a new ORM framework every 2 years.
@@ -60,3 +75,4 @@ IAuthorRepository Authors{get;}
 void Complete()
 ```
 UnitOfWork implements IUnitOfWork
+
