@@ -15,6 +15,8 @@
           <Property Name="Abstract" Type="text" />
           <Property Name="Author" Type="int" />
           <Property Name="CreatedDate" Type="date" />
+          <Property Name="IsPublic" Type="bit" />
+          <Property Name="IsApproved" Type="bit" />
         </EntityType>
         <EntityType Name="User">
           <Key>
@@ -86,6 +88,8 @@
           <Property Name="Author" Type="Int32" />
           <Property Name="CreatedDate" Type="DateTime" Precision="0" />
           <NavigationProperty Name="User" Relationship="testModel.FK_Course_User" FromRole="Course" ToRole="User" />
+          <Property Name="IsPublic" Type="Boolean" />
+          <Property Name="IsApproved" Type="Boolean" />
         </EntityType>
         <Association Name="FK_Course_User">
           <End Type="testModel.User" Role="User" Multiplicity="0..1" />
@@ -122,6 +126,8 @@
           <EntitySetMapping Name="Courses">
             <EntityTypeMapping TypeName="testModel.Course">
               <MappingFragment StoreEntitySet="Course">
+                <ScalarProperty Name="IsApproved" ColumnName="IsApproved" />
+                <ScalarProperty Name="IsPublic" ColumnName="IsPublic" />
                 <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
                 <ScalarProperty Name="Author" ColumnName="Author" />
                 <ScalarProperty Name="Abstract" ColumnName="Abstract" />

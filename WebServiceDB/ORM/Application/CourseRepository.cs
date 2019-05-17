@@ -17,17 +17,27 @@ namespace WebServiceDB.ORM.Application
         {
         }
 
-        public IEnumerable<Course> GetCoursesWithAuthors(int pageIndex, int pageSize)
+        public IEnumerable<Course> GetLatestCourses(int pageIndex, int pageSize)
         {
-            return MyAppContext.Courses.Include("User")
+            return MyAppContext.Courses
+                .Where(c => c.IsApproved == true && c.IsPublic == true)
                 .OrderBy(c => c.CreatedDate)
                 .Skip((pageIndex - 1) * pageSize)
                 .Take(pageSize).ToList();
         }
 
-        public IEnumerable<Course> GetTopSellingCourses(int count)
+        public IEnumerable<Course> GetLatestCourses(int count)
         {
-            return MyAppContext.Courses.Take(count).ToList();
+            return MyAppContext.Courses
+                .Where(c => c.IsApproved == true && c.IsPublic == true)
+                .OrderBy(c => c.CreatedDate)
+                .Take(count).ToList();
+        }
+
+        public IEnumerable<Course> GetCoursesByAuthor(int AuthorId)
+        {
+            return MyAppContext.Courses
+                .Where(c => (c.Author==AuthorId && c.IsApproved == true && c.IsPublic == true)).ToList();
         }
     }
 }

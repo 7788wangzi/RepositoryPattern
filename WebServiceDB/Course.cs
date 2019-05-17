@@ -20,6 +20,8 @@ namespace WebServiceDB
         public string Abstract { get; set; }
         public Nullable<int> Author { get; set; }
         public Nullable<System.DateTime> CreatedDate { get; set; }
+        public Nullable<bool> IsPublic { get; set; }
+        public Nullable<bool> IsApproved { get; set; }
     
         public virtual User User { get; set; }
     }

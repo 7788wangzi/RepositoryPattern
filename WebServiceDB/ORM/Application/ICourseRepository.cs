@@ -9,7 +9,8 @@ namespace WebServiceDB.ORM.Application
 {
     public interface ICourseRepository: IRepository<Course>
     {
-        IEnumerable<Course> GetTopSellingCourses(int count);
-        IEnumerable<Course> GetCoursesWithAuthors(int pageIndex, int pageSize);
+        IEnumerable<Course> GetLatestCourses(int count);
+        IEnumerable<Course> GetLatestCourses(int pageIndex, int pageSize);
+        IEnumerable<Course> GetCoursesByAuthor(int AuthorId);
     }
 }

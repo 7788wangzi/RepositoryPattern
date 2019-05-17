@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -26,7 +27,7 @@ namespace WebServiceDB
                 var course = unitOfWork.Courses.Get(1);
                 var allCourses = unitOfWork.Courses.GetAll();             
 
-                var courses = unitOfWork.Courses.GetCoursesWithAuthors(1, 10);
+                var courses = unitOfWork.Courses.GetLatestCourses(1, 10);
 
                 //update example
                 course.Abstract = "course 1 - abstract";
@@ -37,46 +38,108 @@ namespace WebServiceDB
 
         }
 
+        [WebMethod]
+        public string GetAllCourses()
+        {
+            using (var unitOfWork = new ORM.Application.UnitOfWork(new testEntities()))
+            {
+                var allCourses = unitOfWork.Courses.GetAll();
 
-        //[WebMethod]
-        //public string HelloWorld()
-        //{
-           
+                
+                string result = SerializeHelper.ToString(allCourses);
 
-        //    testEntities myEntity = new testEntities();
+                return result;
+            }
+        }
 
-        //    myEntity.Users.Add(new User()
-        //    {
-        //        Name = "user 2",
-        //        Password = "456",
-        //        CreatedDate = System.DateTime.UtcNow
-        //    });
-        //    var result = myEntity.SaveChanges();
+        [WebMethod]
+        public string GetCoursesOfAuthor(int authorID)
+        {
+            using (var unitOfWork = new ORM.Application.UnitOfWork(new testEntities()))
+            {
+                var authroCourses = unitOfWork.Courses.GetCoursesByAuthor(authorID);
 
-        //    return result.ToString();
-        //}
+                string result = SerializeHelper.ToString(authroCourses);
 
-        //[WebMethod(MessageName = "Register", Description = "Register a new account")]
-        ////[System.Xml.Serialization.XmlInclude(typeof(int))]
-        //public async Task<int> Register(string UserName, string Password)
-        //{
-        //    testEntities myEntity = new testEntities();
+                return result;
+            }
+        }
 
-        //    myEntity.Users.Add(new User()
-        //    {
-        //        Name = UserName,
-        //        Password = Password,
-        //        CreatedDate = System.DateTime.UtcNow
-        //    });
-        //    var result = await myEntity.SaveChangesAsync();
-        //    return result;
-        //}
+        [WebMethod(MessageName = "Register", Description = "Register a new account")]
+        public string Register(string UserName, string Password, string role, string phone)
+        {
+            PasswordHelper passwordHelper = new PasswordHelper();
+            string encryptedPassword = passwordHelper.Encrypt(Password, "123");
 
-        //[WebMethod(MessageName = "GetUsers", Description = "Get all users")]
-        //public List<User> GetUsers()
-        //{
-        //    testEntities myEntity = new testEntities();
-        //    return myEntity.Users.ToList<User>();
-        //}
+            using (var unitOfWork = new ORM.Application.UnitOfWork(new testEntities()))
+            {
+                User newUser = new User()
+                {
+                    Name = UserName,
+                    Password = encryptedPassword,
+                    Role = role,
+                    Telephone = phone
+                };
+
+                unitOfWork.Users.Add(newUser);
+                unitOfWork.Complete();
+
+                return SerializeHelper.ToString(newUser);
+            }
+        }
+
+        [WebMethod(MessageName = "SignInWithPassword", Description = "Sign in with password")]
+        //[System.Xml.Serialization.XmlInclude(typeof(int))]
+        public string SignInWithPassword(string UserName, string Password)
+        {
+            PasswordHelper passwordHelper = new PasswordHelper();
+            string encryptedPassword = passwordHelper.Encrypt(Password, "123");
+
+            using (var unitOfWork = new ORM.Application.UnitOfWork(new testEntities()))
+            {
+                foreach(var user in unitOfWork.Users.GetAll())
+                {
+                    if(user.Name == UserName && user.Password == encryptedPassword)
+                    {
+                        return SerializeHelper.ToString(user);
+                    }
+                }
+                return JsonConvert.SerializeObject("FAIL");
+            }
+        }
+
+        [WebMethod(MessageName = "SignInWithTempCode", Description = "Sign in with temporary code")]
+        //[System.Xml.Serialization.XmlInclude(typeof(int))]
+        public string SignInWithTempCode(string phone, string TempCode)
+        {
+            using (var unitOfWork = new ORM.Application.UnitOfWork(new testEntities()))
+            {
+                foreach (var user in unitOfWork.Users.GetAll())
+                {
+                    if (user.Telephone == phone && user.TempCode == TempCode)
+                    {
+                        return SerializeHelper.ToString(user);
+                    }
+                }
+                return JsonConvert.SerializeObject("FAIL");
+            }
+        }
+
+        [WebMethod(MessageName = "ResetUserPassword", Description = "Reset user password")]
+        //[System.Xml.Serialization.XmlInclude(typeof(int))]
+        public string ResetUserPassword(int UserId, string passowrd)
+        {
+            PasswordHelper passwordHelper = new PasswordHelper();
+            string encryptedPassword = passwordHelper.Encrypt(passowrd, "123");
+
+            using (var unitOfWork = new ORM.Application.UnitOfWork(new testEntities()))
+            {
+                var user = unitOfWork.Users.Get(UserId);
+                user.Password = encryptedPassword;
+                unitOfWork.Complete();
+
+                return SerializeHelper.ToString(user);
+            }
+        }
     }
 }
